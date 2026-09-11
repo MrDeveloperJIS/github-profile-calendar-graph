@@ -6,7 +6,7 @@
 // Usage:
 //   1. cp .env.example .env   (then fill in GH_TOKEN and USERNAMES)
 //   2. node dev-server.js
-//   3. open http://localhost:3000/api/calendar?user=YOUR_USERNAME
+//   3. open http://localhost:9000/api/calendar?user=YOUR_USERNAME
 
 const http = require('http');
 const { URL } = require('url');

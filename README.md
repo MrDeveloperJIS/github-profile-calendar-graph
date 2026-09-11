@@ -11,6 +11,8 @@ framework, no build step, no database.
 ![contribution calendar](https://your-project.vercel.app/api/calendar?user=YOUR_USERNAME&theme=dark)
 ```
 
+See [Usage](#-usage) for the full list of query parameters (theme, year, width, radius, border, speed).
+
 ---
 
 ## Table of Contents
@@ -55,8 +57,8 @@ framework, no build step, no database.
 
 | Theme | Preview |
 |---|---|
-| Light theme | ![preview-light](https://your-project.vercel.app/api/calendar?user=MrDeveloperJIS&theme=light) |
-| Dark theme | ![preview-dark](https://your-project.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark) |
+| Light theme | ![preview-light](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=light&year=2020) |
+| Dark theme | ![preview-dark](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2020) |
 
 ---
 
@@ -64,7 +66,7 @@ framework, no build step, no database.
 
 1. **Fork or clone this repo.**
    ```bash
-   git clone https://github.com/MrDeveloperJIS/readme-profile-calendar-graph.git
+   git clone https://github.com/MrDeveloperJIS/github-profile-calendar-graph.git
    ```
 2. **Create a GitHub Personal Access Token** — see [full guide below](#-creating-a-github-personal-access-token).
 3. **Deploy to Vercel** and set two environment variables — see [Deployment](#-deployment).
@@ -82,7 +84,7 @@ steps carefully — the token only needs **one, minimal, read-only scope**.
    > We use a **classic** token, not a fine-grained one — fine-grained PATs don't yet reliably
    > support the GraphQL `contributionsCollection` field this project relies on.
 2. Click **Generate new token → Generate new token (classic)**.
-3. Give it a descriptive name, e.g. `readme-calendar-card`.
+3. Give it a descriptive name, e.g. `github-profile-calendar-graph`.
 4. Set an **expiration** (90 days or 1 year are reasonable — you'll just need to rotate it in
    Vercel when it expires; GitHub will email you a reminder).
 5. Under **Select scopes**, check **only**:
@@ -152,7 +154,7 @@ All numeric params take a plain unit-less value (e.g. `?radius=12`, not `12px`).
 | `user` | Yes | — | `?user=octocat` | Must be listed in the deployment's `USERNAMES` env var |
 | `theme` | No | `light` | `?theme=dark` | `light` or `dark`, matches GitHub's own two palettes |
 | `year` | No | account-creation-year → today | `?year=2023` | Show a single calendar year instead of full history |
-| `width` | No | `512` | `?width=760` | Card width in px. Only matters on viewports wide enough to show it — on narrower screens the `<img>` still shrinks to fit its container (see [Responsive width](#responsive-width) below). Clamped to 200–2000. |
+| `width` | No | `512` | `?width=760` | Card width in px. Only matters on viewports wide enough to show it — on narrower screens the `<img>` still shrinks to fit its container. Clamped to 200–2000. |
 | `radius` | No | `0` | `?radius=12` | Corner radius of the card, in px. Clamped to 0–50. |
 | `border` | No | `1` | `?border=2` | Card border width, in px. Solid, colored to match the theme. `0` removes the border entirely. Clamped to 0–10. |
 | `speed` | No | `40` | `?speed=60` | Scroll speed, in px/sec. Higher = faster ticker. Clamped to 5–300. |
@@ -175,20 +177,6 @@ A single year
 ```md
 ![calendar](https://your-project.vercel.app/api/calendar?user=octocat&year=2023&theme=dark)
 ```
-
-### Responsive width
-
-The card is embedded as a plain `<img>`, so its on-screen size comes from two things:
-
-1. The SVG's own `width`/`viewBox` (set via `?width=`, default `512`).
-2. Whatever the page's CSS does to `<img>` tags in narrower containers — GitHub's own
-   markdown body CSS already applies `max-width: 100%` to images, so on a phone-width GitHub
-   profile the card shrinks to fit automatically, regardless of the `width` param.
-
-In other words: `?width=` sets the *ceiling* size for wide screens; it never forces a fixed
-size that overflows a narrow one. Bumping `width` above `512` only visibly does anything once
-the viewer's screen (or the README's rendering container) is wide enough to show it at that
-size.
 
 ### Auto light/dark switching (optional)
 
@@ -222,8 +210,9 @@ tag in HTML-flavored Markdown:
 - **Card chrome:** corner radius (`?radius=`, default `0`) and border width (`?border=`,
   default `1`, `0` to remove) are both configurable and themed to match light/dark mode.
 - **Sizing:** `width="512"` by default, adjustable via `?width=`; the SVG's `viewBox` lets it
-  scale down to `100%` of its container on smaller screens automatically (see
-  [Responsive width](#responsive-width)).
+  scale down to `100%` of its container on smaller screens automatically — GitHub's markdown
+  body CSS already applies `max-width: 100%` to images, so `?width=` sets a ceiling for wide
+  screens without overflowing narrow ones.
 
 ---
 
@@ -244,7 +233,7 @@ tag in HTML-flavored Markdown:
 ## 🛠️ Local development
 
 Both options below read the same `.env` file and serve the same `/api/calendar` handler —
-pick whichever fits your machine. Don't run both at once; they'll fight over port 3000.
+pick whichever fits your machine. Don't run both at once; they'll fight over port 9000.
 
 ### Option A — plain Node, no CLI (recommended if you can't install the Vercel CLI)
 
@@ -261,7 +250,7 @@ node dev-server.js
 # or: npm start
 ```
 
-Then visit `http://localhost:3000/api/calendar?user=YOUR_USERNAME`. Try `&theme=dark` and a
+Then visit `http://localhost:9000/api/calendar?user=YOUR_USERNAME`. Try `&theme=dark` and a
 username **not** in `USERNAMES` too, to confirm the rejection card renders correctly. Stop the
 server with `Ctrl+C`; re-run `node dev-server.js` after any code change to pick it up.
 
@@ -282,7 +271,7 @@ vercel dev
 
 Once the CLI is installed, `npm run dev` (which just runs `vercel dev`) works too.
 
-Then visit `http://localhost:3000/api/calendar?user=YOUR_USERNAME`. Create a `.env` file
+Then visit `http://localhost:9000/api/calendar?user=YOUR_USERNAME`. Create a `.env` file
 (copy `.env.example`) with your own `GH_TOKEN` and `USERNAMES` first — `vercel dev` reads it
 automatically.
 
