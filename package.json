@@ -1,0 +1,14 @@
+{
+    "name": "readme-profile-calendar-graph",
+    "version": "1.0.0",
+    "description": "Animated, self-hosted GitHub-style contribution calendar card for profile READMEs, deployed on Vercel.",
+    "license": "MIT",
+    "private": true,
+    "engines": {
+        "node": ">=18"
+    },
+    "scripts": {
+        "dev": "vercel dev",
+        "start": "node dev-server.js"
+    }
+}
