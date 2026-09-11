@@ -1,187 +1,152 @@
+<div align="center">
+
 # GitHub Readme Profile Calendar Graph
 
-An animated, self-hosted GitHub-style **contribution calendar card** you can embed in your
-GitHub profile README — scrolling continuously from right to left, styled to match GitHub's
-own contribution graph, in light or dark mode.
+**An animated, self-hosted GitHub-style contribution calendar card for your profile README.**
 
-Built with plain JavaScript and deployed as Vercel Serverless Functions. No frontend
-framework, no build step, no database.
+[![License: MIT](https://img.shields.io/github/license/MrDeveloperJIS/github-profile-calendar-graph?color=blue)](./LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D18-339933?logo=node.js&logoColor=white)](https://nodejs.org)
+[![Deploy on Vercel](https://img.shields.io/badge/deploy-vercel-black?logo=vercel&logoColor=white)](https://vercel.com/new/clone?repository-url=https://github.com/MrDeveloperJIS/github-profile-calendar-graph&env=GH_TOKEN,USERNAMES&envDescription=Required%20environment%20variables%20—%20see%20the%20README%20for%20how%20to%20get%20a%20GH_TOKEN&envLink=https://github.com/MrDeveloperJIS/github-profile-calendar-graph%23-creating-a-github-personal-access-token&project-name=github-profile-calendar-graph&repository-name=github-profile-calendar-graph)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/MrDeveloperJIS/github-profile-calendar-graph/pulls)
+
+Continuously scrolling, pixel-matched to GitHub's own contribution graph, light or dark. Plain JavaScript, deployed as Vercel Serverless Functions — no framework, no build step, no database.
+
+</div>
 
 ```md
 ![contribution calendar](https://your-project.vercel.app/api/calendar?user=YOUR_USERNAME&theme=dark)
 ```
-
-See [Usage](#-usage) for the full list of query parameters (theme, year, width, radius, border, speed).
 
 ---
 
 ## Table of Contents
 
 - [Features](#-features)
-- [Preview](#️-preview)
+- [Examples](#️-examples)
 - [Quick Start](#-quick-start)
 - [Creating a GitHub Personal Access Token](#-creating-a-github-personal-access-token)
 - [Deployment](#️-deployment)
 - [Usage](#-usage)
-  - [Query parameters](#query-parameters)
-  - [Examples](#examples)
-  - [Auto light/dark switching](#auto-lightdark-switching-optional)
-- [Design details](#-design-details)
-- [How it works](#-how-it-works)
 - [Local development](#️-local-development)
-  - [Option A — plain Node, no CLI](#option-a--plain-node-no-cli-recommended-if-you-cant-install-the-vercel-cli)
-  - [Option B — Vercel CLI](#option-b--vercel-cli)
 - [Troubleshooting](#-troubleshooting)
 - [License](#-license)
-- [Credits](#-credits)
 
 ---
 
 ## ✨ Features
 
-- 🟩 **Pixel-matches GitHub's own contribution graph colors** (light and dark scales)
-- 🔁 **Continuously scrolling animation** — the grid slides right → left in an infinite loop,
-  built as a single animated SVG (no GIF, no client-side JS, no external image libraries)
-- 📆 **Full history by default** — shows every week from your account's creation year to today,
-  or a single year via `?year=2023`
-- 🌗 **Light / dark theme** via `?theme=light` or `?theme=dark`
-- 🔒 **Allowlisted usernames** — you control exactly which GitHub usernames your deployment
-  will render, via a single `USERNAMES` environment variable, so your GitHub token can't be
-  used to scrape arbitrary accounts through your endpoint
-- 📱 **Responsive width** — defaults to 512px, scales to 100% on narrower viewports
-- ⚡ **Cached at the edge** — data refreshes a few times a day, not on every profile view
+- 🟩 Matches GitHub's contribution colors (light & dark)
+- 🔁 Infinite scroll animation — single animated SVG, no GIF, no client JS
+- 🌗 Light/dark theme via `?theme=`
+- 🔒 Username allowlist via `USERNAMES`, so your token can't be used to scrape arbitrary accounts
+- 📆 Full history by default, or from a custom start year/date via `?year=`/`?date=`
+- 🎨 Custom text/background/border colors via `?color=`, `?bg-color=`, `?border=` — the grid squares stay fixed
+- 📱 Responsive width, edge-cached data
 
 ---
 
-## 🖼️ Preview
+## 🖼️ Examples
 
-| Theme | Preview |
-|---|---|
-| Light theme | ![preview-light](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=light&year=2020) |
-| Dark theme | ![preview-dark](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2020) |
+```md
+`https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=light`
+```
+![preview](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=light&year=2020) 
+
+```md
+`https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark`
+```
+![preview](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2020)
+
+```md
+`https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2020`
+```
+![preview](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2020)
+
+```md
+`https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&date=20092024`
+```
+![preview](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&date=20092024)
+
+```md
+`https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2025&color=f0f8ff&bg-color=0c0c0c&border=f0f8ff`
+```
+![preview](https://github-profile-calendar-graph.vercel.app/api/calendar?user=MrDeveloperJIS&theme=dark&year=2025&color=f0f8ff&bg-color=0c0c0c&border=f0f8ff)
+
+Full parameter list and defaults: [Usage](#-usage).
 
 ---
 
 ## 🚀 Quick Start
 
-1. **Fork or clone this repo.**
-   ```bash
-   git clone https://github.com/MrDeveloperJIS/github-profile-calendar-graph.git
-   ```
-2. **Create a GitHub Personal Access Token** — see [full guide below](#-creating-a-github-personal-access-token).
-3. **Deploy to Vercel** and set two environment variables — see [Deployment](#-deployment).
+1. **[Fork this repo](https://github.com/MrDeveloperJIS/github-profile-calendar-graph/fork)**.
+2. **Create a GitHub Personal Access Token** — see [guide below](#-creating-a-github-personal-access-token).
+3. **Deploy to Vercel** and set two environment variables — see [Deployment](#️-deployment).
 4. **Embed the image URL** in your profile README — see [Usage](#-usage).
 
 ---
 
 ## 🔑 Creating a GitHub Personal Access Token
 
-This project needs a token to read contribution data from GitHub's GraphQL API. Follow these
-steps carefully — the token only needs **one, minimal, read-only scope**.
+Needs a **classic** token with only the **`read:user`** scope — fine-grained PATs don't reliably support the GraphQL field this project relies on.
 
-1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**
-   (direct link: `https://github.com/settings/tokens`).
-   > We use a **classic** token, not a fine-grained one — fine-grained PATs don't yet reliably
-   > support the GraphQL `contributionsCollection` field this project relies on.
-2. Click **Generate new token → Generate new token (classic)**.
-3. Give it a descriptive name, e.g. `github-profile-calendar-graph`.
-4. Set an **expiration** (90 days or 1 year are reasonable — you'll just need to rotate it in
-   Vercel when it expires; GitHub will email you a reminder).
-5. Under **Select scopes**, check **only**:
-   - ☑️ `read:user`
-   - Leave everything else unchecked. This project never touches repositories, issues, or
-     any write access — it only reads public profile/contribution data.
-6. Click **Generate token** and **copy it immediately** — GitHub only shows it once.
-7. **Do not commit this token to the repo.** It goes into Vercel's environment variables only
-   (see [Deployment](#-deployment)) and is used exclusively server-side, inside the serverless
-   function — it is never exposed to whoever views your README or image URL.
+<details>
+<summary><strong>Step-by-step guide</strong> (click to expand)</summary>
 
-> **Note on private contributions:** a given user's *private* contributions only appear in
-> their graph if that user has "Include private contributions on my profile" enabled in their
-> own GitHub settings — this project respects the same rule GitHub's own profile page does,
-> and cannot bypass it with a token.
+1. `https://github.com/settings/tokens` → **Generate new token → Generate new token (classic)**.
+2. Name it (e.g. `github-profile-calendar-graph`), set an expiration.
+3. Under **Select scopes**, check **only** `read:user`.
+4. **Generate token** and copy it immediately — GitHub only shows it once.
+5. Don't commit it to the repo — it goes into Vercel's environment variables only (see [Deployment](#️-deployment)), used server-side, never exposed to viewers of your README.
 
-> **Rotating an expired token:** generate a new one following the same steps, then update the
-> `GH_TOKEN` value in your Vercel project settings and redeploy (or just save — Vercel
-> redeploys automatically on env var changes for the next request).
+> A user's *private* contributions only show if they've enabled "Include private contributions on my profile" — same rule as GitHub's own profile page.
+> **Token expired?** Generate a new one, update `GH_TOKEN` in Vercel, redeploy.
+
+</details>
 
 ---
 
 ## ⚙️ Deployment
 
-1. **Import the project into Vercel:**
-   - [vercel.com/new](https://vercel.com/new) → Import Git Repository → select your fork.
-   - No build settings needed — Vercel auto-detects the `/api/*.js` files as Serverless
-     Functions.
-2. **Node.js version:** `package.json` pins `"engines": { "node": ">=18" }`, so Vercel should
-   select a compatible runtime automatically — `lib/github.js` relies on the global `fetch`,
-   which only exists in Node 18+. If you ever see `fetch is not defined` in the function logs,
-   double-check the version under Project → Settings → General → Node.js Version.
-3. **Set environment variables** under Project → Settings → Environment Variables:
+1. Import your forked repo at **[Vercel](https://vercel.com/new)** — no build settings needed.
+2. Set environment variables under Project → Settings → Environment Variables:
 
    | Variable | Example | Description |
    |---|---|---|
-   | `GH_TOKEN` | `ghp_xxxxxxxxxxxxxxxxxxxx` | The classic PAT from the step above (`read:user` scope only) |
-   | `USERNAMES` | `octocat` or `octocat,mona,hubot` | Comma-separated allowlist of GitHub usernames this deployment will render. **No spaces.** |
+   | `GH_TOKEN` | `ghp_xxxxxxxxxxxxxxxxxxxx` | Classic PAT, `read:user` scope only |
+   | `USERNAMES` | `octocat` or `octocat,mona,hubot` | Comma-separated allowlist. **No spaces.** |
 
-4. **Deploy.** Vercel builds and gives you a URL like `https://readme-profile-calendar-graph.vercel.app`.
-5. **Test it directly** in a browser:
-   ```
-   https://your-project.vercel.app/api/calendar?user=YOUR_USERNAME
-   ```
-   You should see your contribution calendar scrolling. If you instead see a small card saying
-   *"Deploy your own, or add this username to the `USERNAMES` variable"*, double-check that
-   your username is spelled exactly as in `USERNAMES` (case-sensitive) and that you redeployed
-   after setting it.
+3. Deploy, then test in a browser: `https://your-project.vercel.app/api/calendar?user=YOUR_USERNAME`
 
 ---
 
 ## 📖 Usage
 
-Embed the image in any GitHub-flavored Markdown — typically your **profile README**
-(`github.com/YOUR_USERNAME/YOUR_USERNAME/README.md`):
-
 ```md
 ![contribution calendar](https://your-project.vercel.app/api/calendar?user=YOUR_USERNAME)
 ```
 
-### Query parameters
+See it rendered: [Examples](#️-examples).
 
-All numeric params take a plain unit-less value (e.g. `?radius=12`, not `12px`).
+| Param | Default | Example | Description |
+|---|---|---|---|
+| `user` | — | `?user=octocat` | Required. Must be in the `USERNAMES` allowlist |
+| `theme` | `light` | `?theme=dark` | `light` or `dark` |
+| `year` | full history | `?year=2023` | Jan 1 of that year → today |
+| `date` | — | `?date=15022025` | Exact start date, `ddmmyyyy` → today. More specific than `year`; wins if both are given |
+| `width` | `512` | `?width=760` | Card width in px. Clamped 200–2000 |
+| `border-radius` | `0` | `?border-radius=12` | Corner radius, px. Clamped 0–50 *(was `radius`)* |
+| `border-width` | `1` | `?border-width=2` | Border width, px, `0` = none. Clamped 0–10 *(was `border`)* |
+| `speed` | `40` | `?speed=60` | Scroll speed, px/sec. Clamped 5–300 |
+| `color` | theme default | `?color=ff8800` | Text color (labels) |
+| `bg-color` | theme default | `?bg-color=1a1a2e` | Background color |
+| `border` | theme default | `?border=ff8800` | Border color (no effect if `border-width=0`) |
 
-| Param | Required | Default | Example | Description |
-|---|---|---|---|---|
-| `user` | Yes | — | `?user=octocat` | Must be listed in the deployment's `USERNAMES` env var |
-| `theme` | No | `light` | `?theme=dark` | `light` or `dark`, matches GitHub's own two palettes |
-| `year` | No | account-creation-year → today | `?year=2023` | Show a single calendar year instead of full history |
-| `width` | No | `512` | `?width=760` | Card width in px. Only matters on viewports wide enough to show it — on narrower screens the `<img>` still shrinks to fit its container. Clamped to 200–2000. |
-| `radius` | No | `0` | `?radius=12` | Corner radius of the card, in px. Clamped to 0–50. |
-| `border` | No | `1` | `?border=2` | Card border width, in px. Solid, colored to match the theme. `0` removes the border entirely. Clamped to 0–10. |
-| `speed` | No | `40` | `?speed=60` | Scroll speed, in px/sec. Higher = faster ticker. Clamped to 5–300. |
+Hex values have **no leading `#`** (e.g. `ff8800`). Invalid numeric params return an error card; invalid colors just fall back to the theme default. An invalid `date` (bad format, or a calendar date that doesn't exist, e.g. `30022026`) also returns an error card.
 
-Sending a non-numeric value for `width`, `radius`, `border`, or `speed` returns a small error card instead of the calendar.
+<details>
+<summary><strong>Auto light/dark switching</strong> (optional, click to expand)</summary>
 
-### Examples
-
-Default: full history, light theme
-```md
-![calendar](https://your-project.vercel.app/api/calendar?user=octocat)
-```
-
-Dark theme
-```md
-![calendar](https://your-project.vercel.app/api/calendar?user=octocat&theme=dark)
-```
-
-A single year
-```md
-![calendar](https://your-project.vercel.app/api/calendar?user=octocat&year=2023&theme=dark)
-```
-
-### Auto light/dark switching (optional)
-
-GitHub supports switching images based on the viewer's color scheme using the `<picture>`
-tag in HTML-flavored Markdown:
+GitHub also supports switching by viewer color scheme via `<picture>`:
 
 ```html
 <picture>
@@ -191,109 +156,43 @@ tag in HTML-flavored Markdown:
 </picture>
 ```
 
----
-
-## 🎨 Design details
-
-- **Contribution square colors** match GitHub's exact scale:
-  - Light: `#ebedf0` → `#9be9a8` → `#40c463` → `#30a14e` → `#216e39`
-  - Dark: `#161b22` → `#0e4429` → `#006d32` → `#26a641` → `#39d353`
-- **Card background:** `#f0f8ff` (light theme), `#0c0c0c` (dark theme)
-- **Animation:** the full grid scrolls continuously right → left in an infinite loop, built
-  entirely with native SVG/SMIL animation — no GIF, no client-side JavaScript, so it renders
-  correctly as a plain `<img>` inside GitHub's sanitized README HTML. Scroll speed is
-  configurable via `?speed=` (default `40`px/sec).
-- **Sticky year label:** the year in the top-left corner doesn't scroll away with the rest of
-  the grid — it's a fixed label that stays put through the whole year and switches to the next
-  one at the exact instant that year's January column reaches the left edge. No early preview,
-  no blank gap in between — one year is always showing.
-- **Card chrome:** corner radius (`?radius=`, default `0`) and border width (`?border=`,
-  default `1`, `0` to remove) are both configurable and themed to match light/dark mode.
-- **Sizing:** `width="512"` by default, adjustable via `?width=`; the SVG's `viewBox` lets it
-  scale down to `100%` of its container on smaller screens automatically — GitHub's markdown
-  body CSS already applies `max-width: 100%` to images, so `?width=` sets a ceiling for wide
-  screens without overflowing narrow ones.
-
----
-
-## 🧩 How it works
-
-1. A request for `/api/calendar?user=X` checks `X` against the `USERNAMES` allowlist.
-2. If allowed, the function queries **GitHub's GraphQL API** for the account's creation date
-   and its `contributionsCollection` daily data (chunked into 1-year windows, since GitHub
-   caps each query to a 1-year range).
-3. The daily counts are mapped onto a 7-row weekly grid and rendered as an animated SVG string.
-4. The response is served as `image/svg+xml` with cache headers (`s-maxage=21600,
-   stale-while-revalidate=43200` — roughly a 6-hour fresh window, serving stale for up to 12
-   hours while revalidating in the background), so the GitHub API is called only a handful of
-   times a day per username regardless of how many people view your README.
+</details>
 
 ---
 
 ## 🛠️ Local development
 
-Both options below read the same `.env` file and serve the same `/api/calendar` handler —
-pick whichever fits your machine. Don't run both at once; they'll fight over port 9000.
-
-### Option A — plain Node, no CLI (recommended if you can't install the Vercel CLI)
-
-Useful on locked-down machines (e.g. an office laptop) where installing global npm packages
-isn't an option. `dev-server.js` is a small, dependency-free script included in this repo that
-runs the exact same `api/calendar.js` handler as production, using only Node's built-in `http`
-module.
-
 ```bash
 cp .env.example .env
-# edit .env: fill in your real GH_TOKEN and USERNAMES
+# fill in GH_TOKEN and USERNAMES
 
 node dev-server.js
 # or: npm start
 ```
 
-Then visit `http://localhost:9000/api/calendar?user=YOUR_USERNAME`. Try `&theme=dark` and a
-username **not** in `USERNAMES` too, to confirm the rejection card renders correctly. Stop the
-server with `Ctrl+C`; re-run `node dev-server.js` after any code change to pick it up.
+Visit `http://localhost:9000/api/calendar?user=YOUR_USERNAME`. `dev-server.js` runs the exact same `api/calendar.js` handler as production, using only Node's built-in `http` module — no CLI or dependencies needed.
 
-Deployment doesn't need the CLI either — see [Deployment](#️-deployment) above, which is done
-entirely through the Vercel website.
-
-### Option B — Vercel CLI
-
-Closer to Vercel's real production runtime, if you're able to install global npm packages.
-This project has no runtime dependencies, so nothing gets installed into `node_modules` —
-`vercel dev` will detect the `/api` folder and run it directly, prompting you to link/create a
-Vercel project the first time:
-
-```bash
-npm install -g vercel
-vercel dev
-```
-
-Once the CLI is installed, `npm run dev` (which just runs `vercel dev`) works too.
-
-Then visit `http://localhost:9000/api/calendar?user=YOUR_USERNAME`. Create a `.env` file
-(copy `.env.example`) with your own `GH_TOKEN` and `USERNAMES` first — `vercel dev` reads it
-automatically.
+Prefer the Vercel CLI instead? `npm install -g vercel && vercel dev` (or `npm run dev` once installed) reads the same `.env` and is closer to Vercel's real runtime — don't run both at once, they share port 9000.
 
 ---
 
 ## ❓ Troubleshooting
 
+<details>
+<summary><strong>Common issues</strong> (click to expand)</summary>
+
 | Symptom | Likely cause |
 |---|---|
-| Card shows "Deploy your own, or add this username..." | Username not in `USERNAMES`, or typo/case mismatch |
-| Image doesn't load at all (broken icon) | Deployment URL is wrong, or the function errored — check Vercel's function logs |
-| Contribution counts look lower than expected | The user hasn't enabled "include private contributions" on their GitHub profile |
-| Token stopped working | PAT expired — generate a new one and update `GH_TOKEN` in Vercel |
+| "Deploy your own, or add this username..." | Username not in `USERNAMES`, or typo/case mismatch |
+| Image doesn't load (broken icon) | Wrong deployment URL, or function errored — check Vercel logs |
+| `fetch is not defined` in function logs | Node.js version < 18 — `package.json` pins `>=18`; check Project → Settings → General → Node.js Version |
+| Contribution counts look low | User hasn't enabled "include private contributions" |
+| Token stopped working | PAT expired — regenerate and update `GH_TOKEN` |
+
+</details>
 
 ---
 
 ## 📄 License
 
-MIT — Md. Jahidul Islam Sujan.
-
----
-
-## 🙌 Credits
-
-Inspired by GitHub's own contribution graph. Not affiliated with or endorsed by GitHub.
+[MIT](./LICENSE) — Md. Jahidul Islam Sujan. Inspired by GitHub's own contribution graph; not affiliated with or endorsed by GitHub.
